@@ -1,4 +1,4 @@
-package com.project.mountain;
+package com.project.mountain.simple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
