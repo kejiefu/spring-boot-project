@@ -1,0 +1,11 @@
+﻿##排除文件
+*.project
+*.classpath
+*.iml
+
+##排除文件夹
+target
+.settings
+.idea
+log
+logs
