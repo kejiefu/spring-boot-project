@@ -2,6 +2,8 @@
 *.project
 *.classpath
 *.iml
+*.ipr
+*.iws
 
 ##排除文件夹
 target
