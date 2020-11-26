@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.project.mountain.orm.mybatis.mapper.UserMapper">
+<mapper namespace="com.mountain.orm.mybatis.mapper.UserMapper">
 
-    <insert id="saveUser" parameterType="com.project.mountain.orm.mybatis.entity.User">
+    <insert id="saveUser" parameterType="com.mountain.orm.mybatis.entity.User">
         INSERT INTO `t_user` (`id`,`name`,`status`,`create_time`,`update_time`)
         VALUES (#{user.id}, #{user.name},#{user.status}, #{user.createTime},#{user.updateTime})
     </insert>
