@@ -8,4 +8,4 @@ spring-boot-orm-jpa：orm jpa事例
 
 spring-boot-orm-mybatis：orm mybatis事例
 
-spring-boot-orm-mybatis-plus：orm mybatis plus事例
+spring-boot-orm-mybatis-plus：com.baomidou mybatis-plus事例
