@@ -9,3 +9,5 @@ spring-boot-orm-jpa：orm jpa事例
 spring-boot-orm-mybatis：orm mybatis事例
 
 spring-boot-orm-mybatis-plus：com.baomidou mybatis-plus事例
+
+spring-boot-sharding-jdbc：sharding-jdbc 分库分表和 baomidou mybatis-plus使用
