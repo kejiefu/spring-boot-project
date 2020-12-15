@@ -6,5 +6,5 @@ package com.mountain.netty.nacos.service;
  * @Date 2020/12/14 21:21
  * @Created by kejiefu
  */
-public interface RegisterService {
+public interface NacosService {
 }
