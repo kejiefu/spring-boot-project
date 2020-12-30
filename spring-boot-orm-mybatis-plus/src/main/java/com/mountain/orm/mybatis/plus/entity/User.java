@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * @Description TODO
  * @Date 2020/11/23 16:21
@@ -14,7 +12,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("t_user")
-public class User implements Serializable {
+public class User extends BaseEntity {
 
     @TableId(type = IdType.INPUT)
     private Long id;
@@ -33,15 +31,5 @@ public class User implements Serializable {
      * 班级id
      */
     private Long classId;
-
-    /**
-     * 创建时间
-     */
-    private Long createTime;
-
-    /**
-     * 上次更新时间
-     */
-    private Long updateTime;
 
 }
