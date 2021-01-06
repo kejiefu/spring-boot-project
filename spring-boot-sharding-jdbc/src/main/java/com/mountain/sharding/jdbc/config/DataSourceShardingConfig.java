@@ -97,7 +97,7 @@ public class DataSourceShardingConfig {
         // 配置第二个数据源
         HikariDataSource ds1 = new HikariDataSource();
         ds1.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds1.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/d-2?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
+        ds1.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/d2?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
         ds1.setUsername("root");
         ds1.setPassword("123456");
 

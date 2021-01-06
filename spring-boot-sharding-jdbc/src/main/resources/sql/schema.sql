@@ -32,7 +32,7 @@ CREATE TABLE `t_order_2`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT =' 系列示例表2';
 
-USE `d-2`;
+USE `d2`;
 
 DROP TABLE IF EXISTS `t_order_0`;
 CREATE TABLE `t_order_0`
