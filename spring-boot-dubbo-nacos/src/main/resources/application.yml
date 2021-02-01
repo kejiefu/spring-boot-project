@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: service-base
+dubbo:
+  registry:
+    address: nacos://127.0.0.1:8849,nacos://127.0.0.1:8850,nacos://127.0.0.1:8851 #注册地址
+  application:
+    name: dubbo-nacos #应用名
+  protocol:
+    name: dubbo #dubbo协议
+    port: 20880 #协议端口
+  scan:
+    base-packages: com.mountain.dubbo.nacos.service.impl #扫包范围
+  provider:
+    timeout: 30000 #超时时间
+service:
+  version: 1.0.0 #自定义的版本
+
