@@ -23,10 +23,13 @@
     <property name="LOG_MSG" value="- | [%X{requestUUID}] | [%d{yyyyMMdd HH:mm:ss.SSS}] | [%level] | [${HOSTNAME}] | [%thread] | [%logger{36}] | --> %msg|%n "/>
 
     <!--文件大小，默认10MB-->
-    <property name="MAX_FILE_SIZE" value="50MB" />
+    <property name="MAX_FILE_SIZE" value="100MB" />
 
     <!-- 配置日志的滚动时间 ，表示只保留最近 10 天的日志-->
     <property name="MAX_HISTORY" value="10"/>
+
+    <!-- totalSizeCap Logback只在达到极大值限制时删除旧的存档文件。 要和MAX_FILE_SIZE公用-->
+    <property name="TOTAL_SIZE_CAP" value="1GB"/>
 
     <!--输出到控制台-->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -58,6 +61,9 @@
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
+
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
 
         </rollingPolicy>
 
@@ -94,6 +100,9 @@
                 <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
 
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+
         </rollingPolicy>
 
         <!-- 输出的日志内容格式化-->
@@ -126,6 +135,10 @@
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
+
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+
         </rollingPolicy>
 
         <!-- 输出的日志内容格式化-->
