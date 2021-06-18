@@ -1,3 +1,18 @@
+/*
+ * Copyright © ${project.inceptionYear} organization baomidou
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.mountain.dynamic.config;
 
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
@@ -8,6 +23,7 @@ import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSour
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 
@@ -15,25 +31,20 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Map;
 
-@AutoConfigureBefore({DynamicDataSourceAutoConfiguration.class})
+@Configuration
+@AutoConfigureBefore(DynamicDataSourceAutoConfiguration.class)
 public class MyDataSourceConfiguration {
 
     @Resource
     private DynamicDataSourceProperties properties;
 
     /**
-     * shardingjdbc有四种数据源，需要根据业务注入不同的数据源
-     *
-     * <p>1. 未使用分片, 脱敏的名称(默认): shardingDataSource;
-     * <p>2. 主从数据源: masterSlaveDataSource;
-     * <p>3. 脱敏数据源：encryptDataSource;
-     * <p>4. 影子数据源：shadowDataSource
-     * <p>5. 分片使用数据源：shardingSphereDataSource
+     * 未使用分片, 脱敏的名称(默认): shardingDataSource
+     * shardingjdbc使用了主从: masterSlaveDataSource
      */
     @Lazy
-    @Resource(name = "shardingSphereDataSource") //shardingSphereDataSource
-    private DataSource shardingSphereDataSource;
-
+    @Resource(name = "masterSlaveDataSource")
+    private DataSource masterSlaveDataSource;
 
     @Bean
     public DynamicDataSourceProvider dynamicDataSourceProvider() {
@@ -42,8 +53,8 @@ public class MyDataSourceConfiguration {
             @Override
             public Map<String, DataSource> loadDataSources() {
                 Map<String, DataSource> dataSourceMap = createDataSourceMap(datasourceMap);
-                dataSourceMap.put("sharding", shardingSphereDataSource);
-                //打开下面的代码可以把 shardingjdbc 管理的数据源也交给动态数据源管理 (根据自己需要选择开启)
+                dataSourceMap.put("sharding", masterSlaveDataSource);
+                //打开下面的代码可以把 sharding jdbc 管理的数据源也交给动态数据源管理 (根据自己需要选择开启)
                 //dataSourceMap.putAll(((MasterSlaveDataSource) masterSlaveDataSource).getDataSourceMap());
                 return dataSourceMap;
             }
@@ -57,12 +68,11 @@ public class MyDataSourceConfiguration {
      */
     @Primary
     @Bean
-    public DataSource dataSource(DynamicDataSourceProvider dynamicDataSourceProvider) {
+    public DataSource dataSource() {
         DynamicRoutingDataSource dataSource = new DynamicRoutingDataSource();
         dataSource.setPrimary(properties.getPrimary());
         dataSource.setStrict(properties.getStrict());
         dataSource.setStrategy(properties.getStrategy());
-        dataSource.setProvider(dynamicDataSourceProvider);
         dataSource.setP6spy(properties.getP6spy());
         dataSource.setSeata(properties.getSeata());
         return dataSource;

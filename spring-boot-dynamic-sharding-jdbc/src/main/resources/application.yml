@@ -1,37 +1,63 @@
 spring:
-  datasource:
-    dynamic:
-      primary: ds1  #设置默认的数据源或者数据源组,默认值即为master
-      strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候会抛出异常,不启动则使用默认数据源.
-      datasource:
-        ds1:
-          url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
-          username: root
-          password: 123456
-          driver-class-name: com.mysql.cj.jdbc.Driver
-        ds2:
-          url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
-          username: root
-          password: 123456
-          driver-class-name: com.mysql.cj.jdbc.Driver
-    #数据源配置
+  # shardingjdbc 配置
   shardingsphere:
-    props:
-      sql:
-        show: true
     datasource:
-      names: ds1
-      ds1:
-        type: com.zaxxer.hikari.HikariDataSource
-        driver-class-name: com.mysql.cj.jdbc.Driver
+      names: shardingmaster,shardingslave0,shardingslave1
+      shardingmaster:
         jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
         username: root
         password: 123456
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.zaxxer.hikari.HikariDataSource
+      shardingslave0:
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.zaxxer.hikari.HikariDataSource
+      shardingslave1:
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.zaxxer.hikari.HikariDataSource
+    masterslave:
+      name: ms
+      load-balance-algorithm-type: round_robin
+      master-data-source-name: shardingmaster
+      slave-data-source-names: shardingslave0,shardingslave1
     sharding:
       tables:
-        t_order:
+        t_student:
           actualDataNodes: ds1.t_student_${0..2}
           tableStrategy:
             inline:
               shardingColumn: user_id
               algorithmExpression: t_student_${user_id % 2}
+          keyGenerator:
+            type: SNOWFLAKE
+            column: id
+  # 动态数据源配置
+  datasource:
+    dynamic:
+      datasource:
+        master:
+          url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          type: com.zaxxer.hikari.HikariDataSource
+        test:
+          url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+          username: root
+          password: 123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          type: com.zaxxer.hikari.HikariDataSource
+logging:
+  level:
+    com.baomidou: debug
+    org:
+      apache:
+        shardingsphere: debug
+          #debug: true
+

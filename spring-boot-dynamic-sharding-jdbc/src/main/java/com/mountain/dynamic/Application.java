@@ -7,6 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * 官网示例 https://github.com/dynamic-datasource/dynamic-datasource-samples
+ */
 @SpringBootApplication
 @EnableTransactionManagement
 @MapperScan("com.mountain.dynamic.mapper")
