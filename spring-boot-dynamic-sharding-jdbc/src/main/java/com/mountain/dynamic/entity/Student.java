@@ -13,7 +13,7 @@ import lombok.Data;
  * @Created by kejiefu
  */
 @Data
-@TableName("t_teacher")
+@TableName("t_student")
 public class Student extends BaseEntity {
 
     @TableId(type = IdType.ASSIGN_ID)

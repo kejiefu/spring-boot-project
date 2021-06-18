@@ -11,7 +11,7 @@ import com.mountain.dynamic.entity.Teacher;
  */
 public interface TeacherService extends IService<Teacher> {
 
-
+    void saveTeacher() throws Exception;
 
 }
 

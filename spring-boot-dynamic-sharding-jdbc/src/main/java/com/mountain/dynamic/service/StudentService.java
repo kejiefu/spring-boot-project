@@ -11,7 +11,9 @@ import com.mountain.dynamic.entity.Student;
  */
 public interface StudentService extends IService<Student> {
 
+    void saveStudent() throws Exception;
 
+    void testMore() throws Exception;
 
 }
 

@@ -1,8 +1,7 @@
 package com.mountain.dynamic.service.impl;
 
-
 import com.mountain.dynamic.ApplicationTests;
-import com.mountain.dynamic.service.StudentService;
+import com.mountain.dynamic.service.TeacherService;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Resource;
@@ -10,22 +9,18 @@ import javax.annotation.Resource;
 /**
  * @author kejiefu
  * @Description TODO
- * @Date 2021/6/14 15:56
+ * @Date 2021/6/18 19:57
  * @Created by kejiefu
  */
-public class StudentServiceImplTest extends ApplicationTests {
+public class TeacherServiceImplTest extends ApplicationTests {
 
     @Resource
-    StudentService studentService;
+    TeacherService teacherService;
 
     @Test
     public void test1() throws Exception {
-        studentService.saveStudent();
+        teacherService.saveTeacher();
     }
 
-    @Test
-    public void test2() throws Exception {
-        studentService.testMore();
-    }
 
 }

@@ -12,23 +12,39 @@ spring:
         password: 123456
         driver-class-name: com.mysql.cj.jdbc.Driver
         type: com.zaxxer.hikari.HikariDataSource
+      #shardingslave0:
+        #jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+        #username: root
+        #password: 123456
+        #driver-class-name: com.mysql.cj.jdbc.Driver
+        #type: com.zaxxer.hikari.HikariDataSource
+      #shardingslave1:
+        #jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+        #username: root
+        #password: 123456
+        #driver-class-name: com.mysql.cj.jdbc.Driver
+        #type: com.zaxxer.hikari.HikariDataSource
     sharding:
+      #分片要配置成奇数,分片键的值不嫩为空
+      binding-tables: t_user,t_student
       tables:
         t_student:
           actualDataNodes: shardingmaster.t_student_${0..2}
           tableStrategy:
             inline:
               shardingColumn: user_id
-              algorithmExpression: t_student_${user_id % 3}
+              #取模
+              algorithmExpression: t_student_${Math.abs(user_id.hashCode())%3}
         t_user:
           actualDataNodes: shardingmaster.t_user_${0..4}
           tableStrategy:
             inline:
               shardingColumn: id
-              algorithmExpression: t_user_${id % 4}
-          keyGenerator:
-            type: SNOWFLAKE
-            column: id
+              #取余
+              algorithmExpression: t_user_${id%5}
+          #keyGenerator:
+            #type: SNOWFLAKE
+            #column: id
   # 动态数据源配置
   datasource:
     dynamic:
@@ -39,3 +55,9 @@ spring:
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
           type: com.zaxxer.hikari.HikariDataSource
+        #test:
+          #url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+          #username: root
+          #password: 123456
+          #driver-class-name: com.mysql.cj.jdbc.Driver
+          #type: com.zaxxer.hikari.HikariDataSource
