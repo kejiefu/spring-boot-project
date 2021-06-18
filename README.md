@@ -11,3 +11,7 @@ spring-boot-orm-mybatis：orm mybatis事例
 spring-boot-orm-mybatis-plus：com.baomidou mybatis-plus事例
 
 spring-boot-sharding-jdbc：sharding-jdbc 分库分表和 baomidou mybatis-plus使用
+
+spring-boot-dynamic-datasource：dynamic-datasource实现多数据源的读写分离
+
+spring-boot-dynamic-sharding-jdbc：mybatis-plus + dynamic + sharding-jdbc 实现读写分离和数据分片
