@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @TableName("t_teacher")
-public class Teacher extends BaseEntity {
+public class Student extends BaseEntity {
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;

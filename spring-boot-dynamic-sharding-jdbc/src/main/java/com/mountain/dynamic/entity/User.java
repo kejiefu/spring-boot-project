@@ -13,8 +13,8 @@ import lombok.Data;
  * @Created by kejiefu
  */
 @Data
-@TableName("t_teacher")
-public class Teacher extends BaseEntity {
+@TableName("t_user")
+public class User extends BaseEntity {
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
@@ -24,9 +24,5 @@ public class Teacher extends BaseEntity {
      */
     private String name;
 
-    /**
-     * t_user.id
-     */
-    private Long userId;
 
 }

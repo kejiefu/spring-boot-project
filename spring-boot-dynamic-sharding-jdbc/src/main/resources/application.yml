@@ -1,39 +1,31 @@
 spring:
   # shardingjdbc 配置
   shardingsphere:
+    props:
+      sql:
+        show: true
     datasource:
-      names: shardingmaster,shardingslave0,shardingslave1
+      names: shardingmaster #,shardingslave0,shardingslave1
       shardingmaster:
         jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
         username: root
         password: 123456
         driver-class-name: com.mysql.cj.jdbc.Driver
         type: com.zaxxer.hikari.HikariDataSource
-      shardingslave0:
-        jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
-        username: root
-        password: 123456
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        type: com.zaxxer.hikari.HikariDataSource
-      shardingslave1:
-        jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
-        username: root
-        password: 123456
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        type: com.zaxxer.hikari.HikariDataSource
-    masterslave:
-      name: ms
-      load-balance-algorithm-type: round_robin
-      master-data-source-name: shardingmaster
-      slave-data-source-names: shardingslave0,shardingslave1
     sharding:
       tables:
         t_student:
-          actualDataNodes: ds1.t_student_${0..2}
+          actualDataNodes: shardingmaster.t_student_${0..2}
           tableStrategy:
             inline:
               shardingColumn: user_id
-              algorithmExpression: t_student_${user_id % 2}
+              algorithmExpression: t_student_${user_id % 3}
+        t_user:
+          actualDataNodes: shardingmaster.t_user_${0..4}
+          tableStrategy:
+            inline:
+              shardingColumn: id
+              algorithmExpression: t_user_${id % 4}
           keyGenerator:
             type: SNOWFLAKE
             column: id
@@ -47,17 +39,3 @@ spring:
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
           type: com.zaxxer.hikari.HikariDataSource
-        test:
-          url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
-          username: root
-          password: 123456
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          type: com.zaxxer.hikari.HikariDataSource
-logging:
-  level:
-    com.baomidou: debug
-    org:
-      apache:
-        shardingsphere: debug
-          #debug: true
-
