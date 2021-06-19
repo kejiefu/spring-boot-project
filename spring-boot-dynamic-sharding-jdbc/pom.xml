@@ -80,6 +80,12 @@
             <version>5.4.1</version>
         </dependency>
 
+        <!--阿里 FastJson依赖-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.61</version>
+        </dependency>
     </dependencies>
 
 </project>

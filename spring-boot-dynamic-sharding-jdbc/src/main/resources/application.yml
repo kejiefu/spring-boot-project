@@ -1,3 +1,5 @@
+server:
+  port: 8088
 spring:
   # shardingjdbc 配置
   shardingsphere:
@@ -12,13 +14,13 @@ spring:
         password: 123456
         driver-class-name: com.mysql.cj.jdbc.Driver
         type: com.zaxxer.hikari.HikariDataSource
-      #shardingslave0:
+        #shardingslave0:
         #jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
         #username: root
         #password: 123456
         #driver-class-name: com.mysql.cj.jdbc.Driver
         #type: com.zaxxer.hikari.HikariDataSource
-      #shardingslave1:
+        #shardingslave1:
         #jdbc-url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
         #username: root
         #password: 123456
@@ -42,7 +44,7 @@ spring:
               shardingColumn: id
               #取余
               algorithmExpression: t_user_${id%5}
-          #keyGenerator:
+            #keyGenerator:
             #type: SNOWFLAKE
             #column: id
   # 动态数据源配置
@@ -55,7 +57,7 @@ spring:
           password: 123456
           driver-class-name: com.mysql.cj.jdbc.Driver
           type: com.zaxxer.hikari.HikariDataSource
-        #test:
+          #test:
           #url: jdbc:mysql://127.0.0.1:3306/b1?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
           #username: root
           #password: 123456
