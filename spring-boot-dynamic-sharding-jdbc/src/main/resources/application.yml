@@ -25,7 +25,7 @@ spring:
         #driver-class-name: com.mysql.cj.jdbc.Driver
         #type: com.zaxxer.hikari.HikariDataSource
     sharding:
-      #分片要配置成奇数,分片键的值不嫩为空
+      #分片要配置成奇数,分片键的值不能为空
       binding-tables: t_user,t_student
       tables:
         t_student:
