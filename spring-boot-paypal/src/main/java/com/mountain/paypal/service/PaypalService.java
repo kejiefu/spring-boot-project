@@ -1,7 +1,7 @@
 package com.mountain.paypal.service;
 
-import com.mountain.paypal.enums.PaypalPaymentIntent;
-import com.mountain.paypal.enums.PaypalPaymentMethod;
+import com.mountain.paypal.enums.PaypalPaymentIntentEnum;
+import com.mountain.paypal.enums.PaypalPaymentMethodEnum;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
@@ -20,8 +20,8 @@ public class PaypalService {
     public Payment createPayment(
             Double total, 
             String currency, 
-            PaypalPaymentMethod method,
-            PaypalPaymentIntent intent,
+            PaypalPaymentMethodEnum method,
+            PaypalPaymentIntentEnum intent,
             String description, 
             String cancelUrl, 
             String successUrl) throws PayPalRESTException{
@@ -48,6 +48,7 @@ public class PaypalService {
         redirectUrls.setReturnUrl(successUrl);
         payment.setRedirectUrls(redirectUrls);
 
+        //远程调用paypal返回调用地址
         return payment.create(apiContext);
     }
 
@@ -56,6 +57,8 @@ public class PaypalService {
         payment.setId(paymentId);
         PaymentExecution paymentExecute = new PaymentExecution();
         paymentExecute.setPayerId(payerId);
+
+        //远程调用paypal校验参数
         return payment.execute(apiContext, paymentExecute);
     }
 }

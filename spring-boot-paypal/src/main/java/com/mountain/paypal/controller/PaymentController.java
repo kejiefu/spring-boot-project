@@ -1,7 +1,7 @@
 package com.mountain.paypal.controller;
 
-import com.mountain.paypal.enums.PaypalPaymentIntent;
-import com.mountain.paypal.enums.PaypalPaymentMethod;
+import com.mountain.paypal.enums.PaypalPaymentIntentEnum;
+import com.mountain.paypal.enums.PaypalPaymentMethodEnum;
 import com.mountain.paypal.service.PaypalService;
 import com.mountain.paypal.utils.URLUtils;
 import com.paypal.api.payments.Links;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author kejiefu
+ */
 @Controller
 @RequestMapping("/")
 public class PaymentController {
@@ -24,32 +27,34 @@ public class PaymentController {
     public static final String PAYPAL_SUCCESS_URL = "pay/success";
     public static final String PAYPAL_CANCEL_URL = "pay/cancel";
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private PaypalService paypalService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String index(){
+    public String index() {
         return "index";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "pay")
-    public String pay(HttpServletRequest request){
+    public String pay(HttpServletRequest request) {
         String cancelUrl = URLUtils.getBaseURl(request) + "/" + PAYPAL_CANCEL_URL;
         String successUrl = URLUtils.getBaseURl(request) + "/" + PAYPAL_SUCCESS_URL;
         try {
             Payment payment = paypalService.createPayment(
-                    500.00, 
-                    "USD", 
-                    PaypalPaymentMethod.paypal,
-                    PaypalPaymentIntent.sale,
-                    "payment description", 
-                    cancelUrl, 
+                    120.00,
+                    "USD",
+                    PaypalPaymentMethodEnum.PAYPAL,
+                    PaypalPaymentIntentEnum.SALE,
+                    "payment description",
+                    cancelUrl,
                     successUrl);
-            for(Links links : payment.getLinks()){
-                if(links.getRel().equals("approval_url")){
-                    return "redirect:" + links.getHref();
+            for (Links links : payment.getLinks()) {
+                if ("approval_url".equals(links.getRel())) {
+                    String redirectUrl = "redirect:" + links.getHref();
+                    log.info("redirectUrl:{}", redirectUrl);
+                    return redirectUrl;
                 }
             }
         } catch (PayPalRESTException e) {
@@ -59,16 +64,20 @@ public class PaymentController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CANCEL_URL)
-    public String cancelPay(){
+    public String cancelPay() {
         return "cancel";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_SUCCESS_URL)
-    public String successPay(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId){
+    public String successPay(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
         try {
+            log.info("校验交易,paymentId:{},payerId:{}", paymentId, payerId);
             Payment payment = paypalService.executePayment(paymentId, payerId);
-            if(payment.getState().equals("approved")){
+            log.info("payment.getState:{}", payment.getState());
+            if ("approved".equals(payment.getState())) {
                 return "success";
+            } else {
+                log.error("交易失败");
             }
         } catch (PayPalRESTException e) {
             log.error(e.getMessage());
