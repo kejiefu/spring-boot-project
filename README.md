@@ -15,3 +15,5 @@ spring-boot-sharding-jdbc：sharding-jdbc 分库分表和 baomidou mybatis-plus�
 spring-boot-dynamic-datasource：dynamic-datasource实现多数据源的读写分离
 
 spring-boot-dynamic-sharding-jdbc：mybatis-plus + dynamic + sharding-jdbc 实现读写分离和数据分片
+
+spring-boot-paypal：接入paypal支付
