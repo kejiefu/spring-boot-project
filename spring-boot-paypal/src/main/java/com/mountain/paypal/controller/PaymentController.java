@@ -25,7 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 public class PaymentController {
 
     public static final String PAYPAL_SUCCESS_URL = "pay/success";
+
     public static final String PAYPAL_CANCEL_URL = "pay/cancel";
+
+    public static final String PAYPAL_CHECK_URL = "pay/check";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -83,6 +86,16 @@ public class PaymentController {
             log.error(e.getMessage());
         }
         return "redirect:/";
+    }
+
+    /**
+     * 手动拉取订单校验
+     *
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CHECK_URL)
+    public String check(@RequestParam("paymentId") String paymentId) {
+        return paypalService.check(paymentId);
     }
 
 }
