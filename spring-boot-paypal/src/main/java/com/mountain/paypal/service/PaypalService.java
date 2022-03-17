@@ -1,39 +1,27 @@
 package com.mountain.paypal.service;
 
 import cn.hutool.core.lang.UUID;
-import cn.hutool.http.HttpRequest;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.mountain.paypal.enums.PaypalPaymentIntentEnum;
 import com.mountain.paypal.enums.PaypalPaymentMethodEnum;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
 public class PaypalService {
 
-    @Autowired
+    @Resource
     private APIContext apiContext;
 
-    @Value("${paypal.client.token.url}")
-    private String clientTokenUrl;
-
-    @Value("${paypal.client.payment.url}")
-    private String clientPaymentUrl;
-
-    @Value("${paypal.client.app}")
-    private String clientId;
-
-    @Value("${paypal.client.secret}")
-    private String clientSecret;
+    private static final String ORDER_SUCCESS = "approved";
 
     public Payment createPayment(
             Double total,
@@ -51,7 +39,7 @@ public class PaypalService {
         transaction.setDescription(description);
         transaction.setAmount(amount);
 
-        //自己内部的商户订单号
+        //内部的商户订单号
         String orderNo = UUID.fastUUID().toString();
         log.info("orderNo:{}", orderNo);
         transaction.setInvoiceNumber(orderNo);
@@ -73,9 +61,9 @@ public class PaypalService {
         payment.setRedirectUrls(redirectUrls);
 
         //远程调用paypal返回调用地址
-        Payment payment1 = payment.create(apiContext);
-        log.info("createPayment.payment:{}", payment1);
-        return payment1;
+        payment = payment.create(apiContext);
+        log.info("createPayment.payment:{}", payment);
+        return payment;
     }
 
     public Payment executePayment(String paymentId, String payerId) throws PayPalRESTException {
@@ -85,51 +73,29 @@ public class PaypalService {
         paymentExecute.setPayerId(payerId);
 
         //远程调用paypal校验参数
-        Payment payment1 = payment.execute(apiContext, paymentExecute);
-        log.info("executePayment.payment:{}", payment1);
-        return payment1;
+        payment = payment.execute(apiContext, paymentExecute);
+        log.info("executePayment.payment:{}", payment);
+        return payment;
     }
 
 
     public String check(String paymentId, String orderNo) {
-        String url = clientTokenUrl;
-
-        //获取accessToken
-        Map<String, Object> fromMap = new HashMap<>(1);
-        fromMap.put("grant_type", "client_credentials");
-        String response = HttpRequest.post(url)
-                .form(fromMap)
-                .basicAuth(clientId, clientSecret)
-                .execute().body();
-
-        log.info("check.response:{},", response);
-
-        String accessToken = JSONObject.parseObject(response)
-                .getString("access_token");
-
-        String tokenType = JSONObject.parseObject(response)
-                .getString("token_type");
-
-        String authorization = tokenType + " " + accessToken;
-
-        String url2 = clientPaymentUrl + paymentId;
-        String res = HttpRequest.get(url2)
-                .header("Content-Type", "application/json")
-                .header("Authorization", authorization)
-                .execute().body();
-
-        JSONObject response2 = JSONObject.parseObject(res);
-        log.info("check.response2:{},", response2);
-        String state = response2.getString("state");
-        if ("approved".equalsIgnoreCase(state)) {
-            JSONArray transactions = response2.getJSONArray("transactions");
-            JSONObject transaction = (JSONObject) transactions.get(0);
-            String invoiceNumber = transaction.getString("invoice_number");
-            if (!Objects.equals(orderNo, invoiceNumber)) {
-                log.error("自己内部的商户订单号与paypal返回的商户订单号不同");
-                return "fail";
+        try {
+            Payment payment = Payment.get(apiContext, paymentId);
+            log.info("check.payment:{}", payment);
+            String state = payment.getState();
+            if (ORDER_SUCCESS.equalsIgnoreCase(state)) {
+                List<Transaction> transactionList = payment.getTransactions();
+                Transaction transaction = transactionList.get(0);
+                String invoiceNumber = transaction.getInvoiceNumber();
+                if (!Objects.equals(orderNo, invoiceNumber)) {
+                    log.error("内部的商户订单号与paypal返回的商户订单号不同");
+                    return "fail";
+                }
+                return "success";
             }
-            return "success";
+        } catch (Exception ex) {
+            log.error("check:" + paymentId, ex);
         }
         return "fail";
     }
