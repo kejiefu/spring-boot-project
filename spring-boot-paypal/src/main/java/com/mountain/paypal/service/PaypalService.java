@@ -8,6 +8,7 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -21,7 +22,9 @@ public class PaypalService {
     @Resource
     private APIContext apiContext;
 
-    private static final String ORDER_SUCCESS = "approved";
+    private static final String ORDER_STATE = "approved";
+
+    private static final String PAYMENT_STATE = "completed";
 
     public Payment createPayment(
             Double total,
@@ -78,21 +81,30 @@ public class PaypalService {
         return payment;
     }
 
-
     public String check(String paymentId, String orderNo) {
         try {
             Payment payment = Payment.get(apiContext, paymentId);
             log.info("check.payment:{}", payment);
             String state = payment.getState();
-            if (ORDER_SUCCESS.equalsIgnoreCase(state)) {
+            if (ORDER_STATE.equalsIgnoreCase(state)) {
                 List<Transaction> transactionList = payment.getTransactions();
                 Transaction transaction = transactionList.get(0);
                 String invoiceNumber = transaction.getInvoiceNumber();
                 if (!Objects.equals(orderNo, invoiceNumber)) {
                     log.error("内部的商户订单号与paypal返回的商户订单号不同");
-                    return "fail";
+                } else {
+                    List<RelatedResources> relatedResourcesList = transaction.getRelatedResources();
+                    if (!CollectionUtils.isEmpty(relatedResourcesList)) {
+                        RelatedResources relatedResources = relatedResourcesList.get(0);
+                        if (Objects.nonNull(relatedResources)) {
+                            Sale sale = relatedResources.getSale();
+                            if (Objects.nonNull(sale) && PAYMENT_STATE.equalsIgnoreCase(sale.getState())) {
+                                return "success";
+                            }
+                        }
+                    }
                 }
-                return "success";
+                return "fail";
             }
         } catch (Exception ex) {
             log.error("check:" + paymentId, ex);
