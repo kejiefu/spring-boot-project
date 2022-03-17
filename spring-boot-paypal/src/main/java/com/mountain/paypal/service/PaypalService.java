@@ -1,6 +1,8 @@
 package com.mountain.paypal.service;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.http.HttpRequest;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mountain.paypal.enums.PaypalPaymentIntentEnum;
 import com.mountain.paypal.enums.PaypalPaymentMethodEnum;
@@ -12,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -52,6 +51,11 @@ public class PaypalService {
         transaction.setDescription(description);
         transaction.setAmount(amount);
 
+        //自己内部的商户订单号
+        String orderNo = UUID.fastUUID().toString();
+        log.info("orderNo:{}", orderNo);
+        transaction.setInvoiceNumber(orderNo);
+
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
 
@@ -87,7 +91,7 @@ public class PaypalService {
     }
 
 
-    public String check(String paymentId) {
+    public String check(String paymentId, String orderNo) {
         String url = clientTokenUrl;
 
         //获取accessToken
@@ -118,7 +122,13 @@ public class PaypalService {
         log.info("check.response2:{},", response2);
         String state = response2.getString("state");
         if ("approved".equalsIgnoreCase(state)) {
-            //可以比较参数是否一致
+            JSONArray transactions = response2.getJSONArray("transactions");
+            JSONObject transaction = (JSONObject) transactions.get(0);
+            String invoiceNumber = transaction.getString("invoice_number");
+            if (!Objects.equals(orderNo, invoiceNumber)) {
+                log.error("自己内部的商户订单号与paypal返回的商户订单号不同");
+                return "fail";
+            }
             return "success";
         }
         return "fail";

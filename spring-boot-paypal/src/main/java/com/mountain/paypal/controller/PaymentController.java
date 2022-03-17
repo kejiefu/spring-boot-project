@@ -3,7 +3,7 @@ package com.mountain.paypal.controller;
 import com.mountain.paypal.enums.PaypalPaymentIntentEnum;
 import com.mountain.paypal.enums.PaypalPaymentMethodEnum;
 import com.mountain.paypal.service.PaypalService;
-import com.mountain.paypal.utils.URLUtils;
+import com.mountain.paypal.utils.UrlUtils;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
@@ -42,8 +42,8 @@ public class PaymentController {
 
     @RequestMapping(method = RequestMethod.POST, value = "pay")
     public String pay(HttpServletRequest request) {
-        String cancelUrl = URLUtils.getBaseURl(request) + "/" + PAYPAL_CANCEL_URL;
-        String successUrl = URLUtils.getBaseURl(request) + "/" + PAYPAL_SUCCESS_URL;
+        String cancelUrl = UrlUtils.getBaseUrl(request) + "/" + PAYPAL_CANCEL_URL;
+        String successUrl = UrlUtils.getBaseUrl(request) + "/" + PAYPAL_SUCCESS_URL;
         try {
             Payment payment = paypalService.createPayment(
                     120.00,
@@ -94,8 +94,8 @@ public class PaymentController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CHECK_URL)
-    public String check(@RequestParam("paymentId") String paymentId) {
-        return paypalService.check(paymentId);
+    public String check(@RequestParam("paymentId") String paymentId, @RequestParam("orderNo") String orderNo) {
+        return paypalService.check(paymentId, orderNo);
     }
 
 }

@@ -2,9 +2,12 @@ package com.mountain.paypal.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class URLUtils {
+/**
+ * @author kejiefu
+ */
+public class UrlUtils {
 
-    public static String getBaseURl(HttpServletRequest request) {
+    public static String getBaseUrl(HttpServletRequest request) {
         String scheme = request.getScheme();
         String serverName = request.getServerName();
         int serverPort = request.getServerPort();
