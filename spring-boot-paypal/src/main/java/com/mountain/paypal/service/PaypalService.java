@@ -47,6 +47,9 @@ public class PaypalService {
         log.info("orderNo:{}", orderNo);
         transaction.setInvoiceNumber(orderNo);
 
+        //发送支付通知的URL
+        transaction.setNotifyUrl("/pay/notify");
+
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
 
@@ -81,7 +84,7 @@ public class PaypalService {
         return payment;
     }
 
-    public String check(String paymentId, String orderNo) {
+    public String checkPay(String paymentId, String orderNo) {
         try {
             Payment payment = Payment.get(apiContext, paymentId);
             log.info("check.payment:{}", payment);

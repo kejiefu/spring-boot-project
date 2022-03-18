@@ -30,6 +30,8 @@ public class PaymentController {
 
     public static final String PAYPAL_CHECK_URL = "pay/check";
 
+    public static final String PAYPAL_NOTIFY_URL = "pay/notify";
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -94,8 +96,13 @@ public class PaymentController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CHECK_URL)
-    public String check(@RequestParam("paymentId") String paymentId, @RequestParam("orderNo") String orderNo) {
-        return paypalService.check(paymentId, orderNo);
+    public String checkPay(@RequestParam("paymentId") String paymentId, @RequestParam("orderNo") String orderNo) {
+        return paypalService.checkPay(paymentId, orderNo);
+    }
+
+    @RequestMapping(value = PAYPAL_NOTIFY_URL)
+    public void notifyPay(HttpServletRequest request) {
+
     }
 
 }
