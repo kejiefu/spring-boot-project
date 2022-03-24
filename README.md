@@ -17,3 +17,5 @@ spring-boot-dynamic-datasource：dynamic-datasource实现多数据源的读写�
 spring-boot-dynamic-sharding-jdbc：mybatis-plus + dynamic + sharding-jdbc 实现读写分离和数据分片
 
 spring-boot-paypal：接入paypal支付
+
+spring-boot-stripe：接入worldpay支付
