@@ -47,19 +47,18 @@ public class WorldpayService {
 
         try {
             OrderResponse orderResponse = restClient.getOrderService().create(orderRequest);
-            System.out.println("Order code: " + orderResponse.getOrderCode());
+            log.info("Order code: " + orderResponse.getOrderCode());
         } catch (WorldpayException e) {
-            System.out.println("Error code: " + e.getApiError().getCustomCode());
-            System.out.println("Error description: " + e.getApiError().getDescription());
-            System.out.println("Error message: " + e.getApiError().getMessage());
+            log.error("WorldpayException:", e);
+            log.error("Error code: " + e.getApiError().getCustomCode());
+            log.error("Error description: " + e.getApiError().getDescription());
+            log.error("Error message: " + e.getApiError().getMessage());
         }
 
     }
 
     public void createToken() {
-        String baseUrl = "https://try.access.worldpay.com";
-        WorldpayRestClient restClient = new WorldpayRestClient(baseUrl, serviceKey);
-        //WorldpayRestClient restClient = new WorldpayRestClient(serviceKey);
+        WorldpayRestClient restClient = new WorldpayRestClient(serviceKey);
 
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setClientKey(clientKey);
