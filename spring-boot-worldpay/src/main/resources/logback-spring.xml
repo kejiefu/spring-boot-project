@@ -5,13 +5,13 @@
     <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="./logs"/>
 
     <!-- 日志级别 -->
-    <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+    <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="DEBUG"/>
 
     <!--  标识这个"STDOUT" 将会添加到这个logger -->
     <springProperty scope="context" name="STDOUT" source="log.stdout" defaultValue="STDOUT"/>
 
     <!-- 日志文件名称-->
-    <property name="LOG_PREFIX" value="spring-boot-simple" />
+    <property name="LOG_PREFIX" value="spring-boot-worldpay" />
 
     <!-- 日志文件编码-->
     <property name="LOG_CHARSET" value="UTF-8" />
@@ -140,7 +140,7 @@
     <logger name="org.apache.commons"      level="INFO" />
     <logger name="org.apache.zookeeper"    level="INFO"  />
     <logger name="com.alibaba.dubbo.monitor" level="INFO"/>
-    <logger name="com.alibaba.dubbo.remoting" level="INFO" />
+    <logger name="org.thymeleaf" level="INFO" />
 
     <!-- ${LOG_ROOT_LEVEL} 日志级别 -->
     <root level="${LOG_ROOT_LEVEL}">

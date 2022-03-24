@@ -75,12 +75,6 @@ spring-boot-starter-parent 是一个特殊的starter，它用来提供相关的M
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-        <!--paypal-->
-        <dependency>
-            <groupId>com.paypal.sdk</groupId>
-            <artifactId>rest-api-sdk</artifactId>
-            <version>1.14.0</version>
-        </dependency>
         <!--thymeleaf-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,8 +1,6 @@
 package com.mountain.worldpay;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -13,14 +11,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Date 2020/9/19 11:18
  */
 @SpringBootApplication
+@Slf4j
 public class Application {
 
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
-
     public static void main(String[] args) {
-        logger.info("~~~~~~~~~~~~~~~~ program start~~~~~~~~~~~~~~~~!");
+        log.info("~~~~~~~~~~~~~~~~ worldpay program start~~~~~~~~~~~~~~~~!");
         SpringApplication.run(Application.class, args);
-        logger.info("~~~~~~~~~~~~~~~~ program execute successfully~~~~~~~~~~~~~~~~!");
+        log.info("~~~~~~~~~~~~~~~~ worldpay program execute successfully~~~~~~~~~~~~~~~~!");
     }
 
 }

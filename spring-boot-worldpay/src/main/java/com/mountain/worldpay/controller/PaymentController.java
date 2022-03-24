@@ -1,12 +1,13 @@
-package com.mountain.paypal.controller;
+package com.mountain.worldpay.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mountain.worldpay.service.WorldpayService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/")
+@Slf4j
 public class PaymentController {
 
     public static final String PAYPAL_SUCCESS_URL = "pay/success";
@@ -24,7 +26,8 @@ public class PaymentController {
 
     public static final String PAYPAL_NOTIFY_URL = "pay/notify";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    @Resource
+    WorldpayService worldpayService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String index() {
@@ -33,7 +36,7 @@ public class PaymentController {
 
     @RequestMapping(method = RequestMethod.POST, value = "pay")
     public String pay(HttpServletRequest request) {
-
+        worldpayService.createToken();;
         return "redirect:/";
     }
 
