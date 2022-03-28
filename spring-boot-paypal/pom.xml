@@ -92,7 +92,7 @@ spring-boot-starter-parent 是一个特殊的starter，它用来提供相关的M
             <artifactId>lombok</artifactId>
             <version>1.18.22</version>
         </dependency>
-        <!--okhttp:3.10.0-->
+        <!--hutool:3.10.0-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>

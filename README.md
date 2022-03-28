@@ -18,4 +18,6 @@ spring-boot-dynamic-sharding-jdbc：mybatis-plus + dynamic + sharding-jdbc 实�
 
 spring-boot-paypal：接入paypal支付
 
-spring-boot-stripe：接入worldpay支付
+spring-boot-worldpay：接入worldpay支付
+
+spring-boot-stripe：接入stripe支付
