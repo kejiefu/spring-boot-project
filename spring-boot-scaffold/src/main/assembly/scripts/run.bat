@@ -2,7 +2,7 @@
 set BIN_DIR=%~dp0
 
 ::cnf
-set APP_MAIN=Application
+set APP_MAIN=com.mountain.scaffold.Application
 
 ::run
 cd %BIN_DIR%\..
