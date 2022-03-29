@@ -57,6 +57,7 @@ public class PaypalService {
         payer.setPaymentMethod(method.toString());
 
         Payment payment = new Payment();
+
         payment.setIntent(intent.toString());
         payment.setPayer(payer);
         payment.setTransactions(transactions);
@@ -66,7 +67,7 @@ public class PaypalService {
 
         payment.setRedirectUrls(redirectUrls);
 
-        //远程调用paypal返回调用地址
+        //远程调用paypal返回调用地址,payment.getId() 支付id由paypal生成，我们无法生成
         payment = payment.create(apiContext);
         log.info("createPayment.payment:{}", payment);
         return payment;
