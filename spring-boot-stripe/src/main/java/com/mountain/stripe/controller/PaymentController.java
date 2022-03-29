@@ -1,6 +1,6 @@
 package com.mountain.stripe.controller;
 
-import com.mountain.stripe.service.PaypalService;
+import com.mountain.stripe.service.StripeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -28,7 +28,7 @@ public class PaymentController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Resource
-    private PaypalService paypalService;
+    private StripeService stripeService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String index() {

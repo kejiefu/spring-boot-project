@@ -3,7 +3,7 @@ package com.mountain.stripe.service;
 /**
  * @author: kejiefu
  **/
-public class PaypalService {
+public class StripeService {
 
 
 
