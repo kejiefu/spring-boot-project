@@ -1,6 +1,5 @@
 package com.mountain.paypal.service;
 
-import cn.hutool.core.lang.UUID;
 import com.mountain.paypal.enums.PaypalPaymentIntentEnum;
 import com.mountain.paypal.enums.PaypalPaymentMethodEnum;
 import com.paypal.api.payments.*;
@@ -42,11 +41,6 @@ public class PaypalService {
         transaction.setDescription(description);
         transaction.setAmount(amount);
 
-        //内部的商户订单号
-        String orderNo = UUID.fastUUID().toString();
-        log.info("orderNo:{}", orderNo);
-        transaction.setInvoiceNumber(orderNo);
-
         //发送支付通知的URL
         transaction.setNotifyUrl("/pay/notify");
 
@@ -70,6 +64,7 @@ public class PaypalService {
         //远程调用paypal返回调用地址,payment.getId() 支付id由paypal生成，我们无法生成
         payment = payment.create(apiContext);
         log.info("createPayment.payment:{}", payment);
+
         return payment;
     }
 
@@ -85,7 +80,13 @@ public class PaypalService {
         return payment;
     }
 
-    public String checkPay(String paymentId, String orderNo) {
+    /**
+     * payee 收款人的账号，取消的也可以查账号
+     *
+     * @param paymentId
+     * @return
+     */
+    public String checkPay(String paymentId) {
         try {
             Payment payment = Payment.get(apiContext, paymentId);
             log.info("check.payment:{}", payment);
@@ -93,21 +94,18 @@ public class PaypalService {
             if (ORDER_STATE.equalsIgnoreCase(state)) {
                 List<Transaction> transactionList = payment.getTransactions();
                 Transaction transaction = transactionList.get(0);
-                String invoiceNumber = transaction.getInvoiceNumber();
-                if (!Objects.equals(orderNo, invoiceNumber)) {
-                    log.error("内部的商户订单号与paypal返回的商户订单号不同");
-                } else {
-                    List<RelatedResources> relatedResourcesList = transaction.getRelatedResources();
-                    if (!CollectionUtils.isEmpty(relatedResourcesList)) {
-                        RelatedResources relatedResources = relatedResourcesList.get(0);
-                        if (Objects.nonNull(relatedResources)) {
-                            Sale sale = relatedResources.getSale();
-                            if (Objects.nonNull(sale) && PAYMENT_STATE.equalsIgnoreCase(sale.getState())) {
-                                return "success";
-                            }
+
+                List<RelatedResources> relatedResourcesList = transaction.getRelatedResources();
+                if (!CollectionUtils.isEmpty(relatedResourcesList)) {
+                    RelatedResources relatedResources = relatedResourcesList.get(0);
+                    if (Objects.nonNull(relatedResources)) {
+                        Sale sale = relatedResources.getSale();
+                        if (Objects.nonNull(sale) && PAYMENT_STATE.equalsIgnoreCase(sale.getState())) {
+                            return "success";
                         }
                     }
                 }
+
                 return "fail";
             }
         } catch (Exception ex) {

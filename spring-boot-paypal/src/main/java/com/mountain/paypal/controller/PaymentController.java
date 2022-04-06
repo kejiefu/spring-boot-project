@@ -96,8 +96,8 @@ public class PaymentController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CHECK_URL)
-    public String checkPay(@RequestParam("paymentId") String paymentId, @RequestParam("orderNo") String orderNo) {
-        return paypalService.checkPay(paymentId, orderNo);
+    public String checkPay(@RequestParam("paymentId") String paymentId) {
+        return paypalService.checkPay(paymentId);
     }
 
     @RequestMapping(value = PAYPAL_NOTIFY_URL)
