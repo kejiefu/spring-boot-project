@@ -122,33 +122,39 @@ public class PaypalService {
             HttpResponse<Order> response = null;
             try {
                 response = payPalHttpClient.execute(request);
+                log.info("checkPay...");
+                log.info("Order:{}", JSONUtil.toJsonStr(response.result()));
+                log.info("Status Code: " + response.statusCode());
+                log.info("Status: " + response.result().status());
+                log.info("Order id: " + response.result().id());
+                if (response.result().purchaseUnits().get(0).payments() != null) {
+                    List<Capture> captures = response.result().purchaseUnits().get(0).payments().captures();
+                    if (captures != null) {
+                        for (Capture capture : captures) {
+                            //capture.id()  交易号
+                            log.info("\t订单编号= " + capture.invoiceId() + "\tCapture Id= " + capture.id() + "\tCapture status= " + capture.status() + "\tCapture amount= " + capture.amount().currencyCode() + ":" + capture.amount().value());
+                            if ("COMPLETED".equals(capture.status())) {
+                                //进行数据库操作，修改订单状态为已支付成功，尽快发货（配合回调和CapturesGet查询确定成功）
+                                log.info("支付成功,状态为=COMPLETED");
+                            }
+                        }
+                    }
+                    List<Refund> refunds = response.result().purchaseUnits().get(0).payments().refunds();
+                    if (refunds != null) {
+                        for (Refund refund : refunds) {
+                            log.info("\t售后编号= " + refund.invoiceId() + "\tRefund Id= " + refund.id() + "\tRefund status= " + refund.status() + "\tRefund amount= " + refund.amount().currencyCode() + ":" + refund.amount().value());
+                        }
+                    }
+
+                }
+                log.info("Links: ");
+                for (com.paypal.orders.LinkDescription link : response.result().links()) {
+                    log.info("\t" + link.rel() + ": " + link.href() + "\tCall Type: " + link.method());
+                }
+                return "success";
             } catch (Exception ex) {
                 log.error("payPalHttpClient.execute:", ex);
             }
-            log.info("Status Code: " + response.statusCode());
-            log.info("Status: " + response.result().status());
-            log.info("Order id: " + response.result().id());
-            if (response.result().purchaseUnits().get(0).payments() != null) {
-                List<Capture> captures = response.result().purchaseUnits().get(0).payments().captures();
-                if (captures != null) {
-                    for (Capture capture : captures) {
-                        //capture.id()  交易号
-                        log.info("\t订单编号= " + capture.invoiceId() + "\tCapture Id= " + capture.id() + "\tCapture status= " + capture.status() + "\tCapture amount= " + capture.amount().currencyCode() + ":" + capture.amount().value());
-                    }
-                }
-                List<Refund> refunds = response.result().purchaseUnits().get(0).payments().refunds();
-                if (refunds != null) {
-                    for (Refund refund : refunds) {
-                        log.info("\t售后编号= " + refund.invoiceId() + "\tRefund Id= " + refund.id() + "\tRefund status= " + refund.status() + "\tRefund amount= " + refund.amount().currencyCode() + ":" + refund.amount().value());
-                    }
-                }
-
-            }
-            log.info("Links: ");
-            for (com.paypal.orders.LinkDescription link : response.result().links()) {
-                log.info("\t" + link.rel() + ": " + link.href() + "\tCall Type: " + link.method());
-            }
-            return "success";
         } catch (Exception ex) {
             log.error("checkPay:" + paymentId, ex);
         }
@@ -159,8 +165,8 @@ public class PaypalService {
     /**
      * 用户通过CreateOrder生成 approveUrl 跳转paypal支付成功后，只是授权，并没有将用户的钱打入我们的paypal账户，我们需要通过 CaptureOrder接口，将钱打入我的PayPal账户
      *
-     * @param paymentId
-     * @return
+     * @param paymentId paymentId
+     * @return String
      */
     public String capturePay(String paymentId)  {
         OrdersCaptureRequest request = new OrdersCaptureRequest(paymentId);
@@ -201,7 +207,7 @@ public class PaypalService {
         } catch (Exception e1) {
             log.error("调用paypal扣款失败:", e1);
         }
-        return "success";
+        return "capture";
     }
 
 }
