@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Insert title here</title>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div id="content"></div>
+<button id="submit">提交</button>
+<script type="application/javascript">
+    $("#submit").click(function () {
+        $.ajax({
+            //请求方式
+            type: 'POST',
+            //发送请求的地址
+            url: '/pay',
+            //服务器返回的数据类型
+            dataType: 'json',
+            success: function (res) {
+                console.log(res);
+                let divForm = document.getElementById('content')
+                if (divForm.length) {
+                    document.body.removeChild(divForm[0])
+                }
+                const div = document.createElement('content');
+                div.innerHTML = res.data;//这个msg就是后台返回的一串from表单
+                document.body.appendChild(div);
+                document.forms[0].setAttribute('target', '_blank') // 新开窗口跳转
+                document.forms[0].submit();
+            },
+            error: function (jqXHR) {
+                //请求失败函数内容
+            }
+        });
+    });
+</script>
+</body>
+</html>
