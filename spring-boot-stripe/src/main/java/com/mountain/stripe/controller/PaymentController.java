@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +37,10 @@ public class PaymentController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "pay")
-    public String pay(HttpServletRequest request) {
-
-        return "redirect:/";
+    public String pay() {
+        String redirectUrl = "redirect:" + stripeService.createPayment();
+        log.info("redirectUrl:{}", redirectUrl);
+        return redirectUrl;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CANCEL_URL)
@@ -48,7 +50,6 @@ public class PaymentController {
 
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_SUCCESS_URL)
     public String successPay() {
-
         return "redirect:/";
     }
 
@@ -58,8 +59,8 @@ public class PaymentController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = PAYPAL_CHECK_URL)
-    public String checkPay() {
-        return "";
+    public String checkPay(@RequestParam("paymentId") String paymentId) {
+        return stripeService.checkPay(paymentId);
     }
 
     @RequestMapping(value = PAYPAL_NOTIFY_URL)

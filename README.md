@@ -23,3 +23,5 @@ spring-boot-paypal2：接入paypal v2支付
 spring-boot-worldpay：接入worldpay支付
 
 spring-boot-stripe：接入stripe支付
+
+spring-boot-alipay：接入阿里支付
