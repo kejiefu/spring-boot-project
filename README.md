@@ -25,3 +25,5 @@ spring-boot-worldpay：接入worldpay支付
 spring-boot-stripe：接入stripe支付
 
 spring-boot-alipay：接入阿里支付
+
+spring-boot-affirm：接入affirm支付

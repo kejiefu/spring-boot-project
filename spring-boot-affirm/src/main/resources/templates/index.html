@@ -1,0 +1,149 @@
+<html lang="">
+<head>
+    <title></title></head>
+<body>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+<button type="submit" id="button">提交</button>
+<script type="application/javascript">
+    /**
+     * 随机生成18位不重复的订单编号
+     * length 随机后缀字符长度，默认为4
+     */
+    function generateOrderNumber(length = 18) {
+        const now = new Date();
+        let year = now.getFullYear().toString();
+        let month = (now.getMonth() + 1).toString();
+        let day = now.getDate().toString();
+        let hour = now.getHours().toString();
+        let minutes = now.getMinutes().toString();
+        let seconds = now.getSeconds().toString();
+        // 存放订单号
+        let num = '';
+        // N位随机数(加在时间戳后面)
+        for (var i = 0; i < length; i++) {
+            num += Math.floor(Math.random() * 10);
+        }
+        return year + month + day + hour + minutes + seconds + num;
+    }
+
+    var orderId = generateOrderNumber();
+    console.log(orderId);
+    //affirm public apikey
+    let key = "";
+    _affirm_config = {
+        public_api_key: key,
+        script: "https://cdn1-sandbox.affirm.com/js/v2/affirm.js"
+    };
+    (function (m, g, n, d, a, e, h, c) {
+        var b = m[n] || {}, k = document.createElement(e), p = document.getElementsByTagName(e)[0],
+            l = function (a, b, c) {
+                return function () {
+                    a[b]._.push([c, arguments])
+                }
+            };
+        b[d] = l(b, d, "set");
+        var f = b[d];
+        b[a] = {};
+        b[a]._ = [];
+        f._ = [];
+        b._ = [];
+        b[a][h] = l(b, a, h);
+        b[c] = function () {
+            b._.push([h, arguments])
+        };
+        a = 0;
+        for (c = "set add save post open empty reset on off trigger ready setProduct".split(" "); a < c.length; a++) f[c[a]] = l(b, d, c[a]);
+        a = 0;
+        for (c = ["get", "token", "url", "items"]; a < c.length; a++) f[c[a]] = function () {
+        };
+        k.async =
+            !0;
+        k.src = g[e];
+        p.parentNode.insertBefore(k, p);
+        delete g[e];
+        f(g);
+        m[n] = b
+    })(window, _affirm_config, "affirm", "checkout", "ui", "script", "ready", "jsReady");
+    $(function () {
+        $("#button").click(function () {
+            alert("生成订单成功");
+            affirm.checkout({
+                "merchant": {
+                    "user_confirmation_url": "http://localhost:8088/pay/success",
+                    "user_cancel_url": "http://localhost:8088/pay/cancel",
+                    "public_api_key": key,
+                    "user_confirmation_url_action": "GET",
+                    "name": "Your Customer-Facing Merchant Name"
+                },
+                "shipping": {
+                    "name": {
+                        "first": "Joe",
+                        "last": "Doe"
+                    },
+                    "address": {
+                        "line1": "633 Folsom St",
+                        "line2": "Floor 7",
+                        "city": "San Francisco",
+                        "state": "CA",
+                        "zipcode": "94107",
+                        "country": "USA"
+                    },
+                    "phone_number": "4153334567",
+                    "email": "joedoe@123fakestreet.com"
+                },
+                "billing": {
+                    "name": {
+                        "first": "Joe",
+                        "last": "Doe"
+                    },
+                    "address": {
+                        "line1": "633 Folsom St",
+                        "line2": "Floor 7",
+                        "city": "San Francisco",
+                        "state": "CA",
+                        "zipcode": "94107",
+                        "country": "USA"
+                    },
+                    "phone_number": "4153334567",
+                    "email": "joedoe@123fakestreet.com"
+                },
+                "items": [{
+                    "display_name": "Awesome Pants",
+                    "sku": "ABC-123",
+                    "unit_price": 10000,
+                    "qty": 3,
+                    "item_image_url": "http://merchantsite.com/images/awesome-pants.jpg",
+                    "item_url": "http://merchantsite.com/products/awesome-pants.html",
+                    "categories": [
+                        ["Home", "Bedroom"],
+                        ["Home", "Furniture", "Bed"]
+                    ]
+                }
+                ],
+                "discounts": {
+                    "RETURN5": {
+                        "discount_amount": 500,
+                        "discount_display_name": "Returning customer 5% discount"
+                    },
+                    "PRESDAY10": {
+                        "discount_amount": 1000,
+                        "discount_display_name": "President's Day 10% off"
+                    }
+                },
+                "metadata": {
+                    "shipping_type": "UPS Ground",
+                    "mode": "modal"
+                },
+                "order_id": orderId,
+                "currency": "USD",
+                "financing_program": "flyus_3z6r12r",
+                "shipping_amount": 1000,
+                "tax_amount": 600,
+                "total": 30100
+            })
+            affirm.checkout.open();
+        });
+    });
+</script>
+</body>
+</html>
