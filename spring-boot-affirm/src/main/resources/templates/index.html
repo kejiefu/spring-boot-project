@@ -26,8 +26,6 @@
         return year + month + day + hour + minutes + seconds + num;
     }
 
-    var orderId = generateOrderNumber();
-    console.log(orderId);
     //affirm public apikey
     let key = "";
     _affirm_config = {
@@ -66,6 +64,8 @@
     })(window, _affirm_config, "affirm", "checkout", "ui", "script", "ready", "jsReady");
     $(function () {
         $("#button").click(function () {
+            var orderId = generateOrderNumber();
+            console.log(orderId);
             alert("生成订单成功");
             affirm.checkout({
                 "merchant": {
@@ -139,9 +139,13 @@
                 "financing_program": "flyus_3z6r12r",
                 "shipping_amount": 1000,
                 "tax_amount": 600,
-                "total": 30100
+                "total": 30121
             })
-            affirm.checkout.open();
+            affirm.checkout.open({
+                onFail: function(){console.log("User cancelled the Affirm checkout flow")},
+                onSuccess: function(a){console.log("Affirm checkout successful, checkout token is: " + a.checkout_token)},
+                onOpen: function(token){console.log("Affirm modal was opened successfully, checkout token is: " + token)}
+            });
         });
     });
 </script>
