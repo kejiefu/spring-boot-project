@@ -21,13 +21,20 @@ public class TestController {
 
     @GetMapping("/getTest1")
     @NeedCoupon
-    public void getTest1(){
+    public void getTest1() {
         aBusinessService.doSomething();
     }
 
     @GetMapping("/getTest2")
-    public void getTest2(){
+    public void getTest2() {
         aBusinessService.doSomething();
+    }
+
+    @GetMapping("/getTest3")
+    public TestDataDTO getTest3() {
+        TestDataDTO dataDTO = new TestDataDTO();
+        dataDTO.setId(1899724075169869827L);
+        return dataDTO;
     }
 
 
