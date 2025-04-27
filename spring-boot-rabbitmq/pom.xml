@@ -83,11 +83,18 @@ spring-boot-starter-parent 是一个特殊的starter，它用来提供相关的M
             <artifactId>lombok</artifactId>
             <version>1.18.22</version>
         </dependency>
+
         <!--hutool:3.10.0-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.7.22</version>
+        </dependency>
+
+        <!--rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
     </dependencies>
