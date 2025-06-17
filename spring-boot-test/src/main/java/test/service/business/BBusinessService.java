@@ -9,7 +9,8 @@ import test.config.RequestContext;
 public class BBusinessService {
 
     public void doSomething() {
-        System.out.println(RequestContext.get("couponList"));
+        System.out.println("BBusinessService.doSomething：" + RequestContext.get("couponList"));
+        int i = 10/0;
     }
 
 }

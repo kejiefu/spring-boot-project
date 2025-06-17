@@ -28,7 +28,10 @@ public class RequestContextInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        System.out.println("afterCompletion.start:" + RequestContext.get("couponList"));
         // 无论是否触发，统一清理上下文（可选）
         RequestContext.clear();
+        System.out.println("afterCompletion");
+        System.out.println("afterCompletion.end:" + RequestContext.get("couponList"));
     }
 }

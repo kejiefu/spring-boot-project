@@ -10,7 +10,8 @@ import test.config.RequestContext;
 public class ABusinessService {
 
     public void doSomething() {
-        System.out.println(RequestContext.get("couponList"));
+        System.out.println("ABusinessService.doSomething：" + RequestContext.get("couponList"));
+
     }
 
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import test.config.NeedCoupon;
 import test.service.business.ABusinessService;
+import test.service.business.BBusinessService;
 
 import javax.annotation.Resource;
 
@@ -19,6 +20,9 @@ public class TestController {
     @Resource
     private ABusinessService aBusinessService;
 
+    @Resource
+    private BBusinessService bBusinessService;
+
     @GetMapping("/getTest1")
     @NeedCoupon
     public void getTest1() {
@@ -26,8 +30,9 @@ public class TestController {
     }
 
     @GetMapping("/getTest2")
+    @NeedCoupon
     public void getTest2() {
-        aBusinessService.doSomething();
+        bBusinessService.doSomething();
     }
 
     @GetMapping("/getTest3")
