@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Stripe Terminal S710 - POS</title>
+    <link rel="stylesheet" href="/static/css/pos.css"/>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1>Stripe Terminal S710 POS</h1>
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-dot offline"></span>
+            <span id="statusText">未连接</span>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <!-- 左侧: 读卡器管理 -->
+        <div class="panel reader-panel">
+            <h2>读卡器管理</h2>
+
+            <div class="section">
+                <h3>Location管理</h3>
+                <button class="btn btn-secondary" id="btnListLocations">刷新Location列表</button>
+                <div id="locationList" class="list-container"></div>
+
+                <div class="form-group" style="margin-top: 12px">
+                    <h4>新建Location</h4>
+                    <input type="text" id="locDisplayName" placeholder="显示名称" value="My Store"/>
+                    <input type="text" id="locLine1" placeholder="地址" value="123 Main St"/>
+                    <input type="text" id="locCity" placeholder="城市" value="San Francisco"/>
+                    <input type="text" id="locState" placeholder="州" value="CA"/>
+                    <input type="text" id="locCountry" placeholder="国家代码" value="US"/>
+                    <input type="text" id="locPostalCode" placeholder="邮编" value="94111"/>
+                    <button class="btn btn-primary" id="btnCreateLocation">创建Location</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>读卡器列表</h3>
+                <button class="btn btn-secondary" id="btnListReaders">刷新读卡器列表</button>
+                <button class="btn btn-warning" id="btnCreateSimulated">创建模拟读卡器</button>
+                <div id="readerList" class="list-container"></div>
+
+                <div class="form-group" style="margin-top: 12px">
+                    <h4>注册S710读卡器</h4>
+                    <input type="text" id="regCode" placeholder="配对码(设备屏幕显示)"/>
+                    <input type="text" id="regLabel" placeholder="读卡器标签" value="S710-001"/>
+                    <input type="text" id="regLocationId" placeholder="Location ID"/>
+                    <button class="btn btn-primary" id="btnRegisterReader">注册读卡器</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧: 支付操作 -->
+        <div class="panel payment-panel">
+            <h2>收银操作</h2>
+
+            <div class="section">
+                <h3>当前读卡器</h3>
+                <div class="selected-reader" id="selectedReader">
+                    <span class="placeholder">请从左侧列表选择读卡器</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>发起支付</h3>
+                <div class="form-group">
+                    <label>金额 (USD)</label>
+                    <div class="amount-input">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="payAmount" placeholder="10.00" step="0.01" min="0.50" value="10.00"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>订单描述</label>
+                    <input type="text" id="payDescription" placeholder="订单描述" value="Test Payment"/>
+                </div>
+                <div class="form-group">
+                    <label>订单号</label>
+                    <input type="text" id="payReferenceId" placeholder="业务订单号"/>
+                </div>
+                <div class="form-group">
+                    <label>捕获方式</label>
+                    <select id="payCaptureMethod">
+                        <option value="manual">手动捕获 (Manual)</option>
+                        <option value="automatic">自动捕获 (Automatic)</option>
+                    </select>
+                </div>
+                <button class="btn btn-success btn-lg" id="btnCreatePayment">发起支付</button>
+                <button class="btn btn-danger" id="btnCancelAction" style="margin-top: 8px">取消当前操作</button>
+            </div>
+
+            <div class="section">
+                <h3>支付状态</h3>
+                <div class="payment-status" id="paymentStatus">
+                    <div class="status-info">等待操作...</div>
+                </div>
+                <div class="form-group" style="margin-top: 12px">
+                    <input type="text" id="capturePaymentIntentId" placeholder="PaymentIntent ID"/>
+                    <button class="btn btn-primary" id="btnCapturePayment">手动Capture</button>
+                    <button class="btn btn-secondary" id="btnCheckStatus">查询状态</button>
+                </div>
+            </div>
+
+            <div class="section" id="simulateSection" style="display:none">
+                <h3>模拟操作(测试)</h3>
+                <button class="btn btn-warning" id="btnSimulatePayment">模拟刷卡</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日志区域 -->
+    <div class="log-panel">
+        <h3>操作日志 <button class="btn btn-sm" id="btnClearLog">清空</button></h3>
+        <div id="logContainer" class="log-container"></div>
+    </div>
+</div>
+
+<script src="/static/js/pos.js"></script>
+</body>
+</html>
