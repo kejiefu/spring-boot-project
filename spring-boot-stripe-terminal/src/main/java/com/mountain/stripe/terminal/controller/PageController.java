@@ -22,4 +22,12 @@ public class PageController {
         return "index";
     }
 
+    /**
+     * SDK驱动模式示例页面
+     */
+    @RequestMapping(value = "/sdk", method = RequestMethod.GET)
+    public String sdk() {
+        return "sdk";
+    }
+
 }

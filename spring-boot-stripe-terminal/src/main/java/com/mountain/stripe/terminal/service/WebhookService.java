@@ -1,9 +1,16 @@
 package com.mountain.stripe.terminal.service;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.stripe.exception.SignatureVerificationException;
+import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.File;
 import com.stripe.model.StripeObject;
+import com.stripe.model.terminal.Reader;
 import com.stripe.net.Webhook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +78,58 @@ public class WebhookService {
      */
     private void handleReaderActionSucceeded(StripeObject stripeObject) {
         log.info("Reader action SUCCEEDED: {}", stripeObject != null ? stripeObject.toJson() : "null");
+        if (stripeObject instanceof Reader) {
+            logCollectInputsSignatureFiles((Reader) stripeObject);
+        }
+    }
+
+    /**
+     * collect_inputs 成功且含 signature 时，用 Stripe File API 拉取文件信息并打印到日志。
+     */
+    private void logCollectInputsSignatureFiles(Reader reader) {
+        JSONObject root = JSONUtil.parseObj(reader.toJson());
+        JSONObject action = root.getJSONObject("action");
+        if (action == null || !"collect_inputs".equals(action.getStr("type"))) {
+            return;
+        }
+        JSONObject collectInputs = action.getJSONObject("collect_inputs");
+        if (collectInputs == null) {
+            return;
+        }
+        JSONArray inputs = collectInputs.getJSONArray("inputs");
+        if (inputs == null) {
+            return;
+        }
+        for (int i = 0; i < inputs.size(); i++) {
+            JSONObject in = inputs.getJSONObject(i);
+            if (in == null || !"signature".equals(in.getStr("type"))) {
+                continue;
+            }
+            JSONObject sig = in.getJSONObject("signature");
+            if (sig == null) {
+                continue;
+            }
+            String fileId = sig.getStr("value");
+            if (StrUtil.isBlank(fileId)) {
+                continue;
+            }
+            try {
+                File file = File.retrieve(fileId);
+                String line = String.format(
+                        "[collect_inputs signature file] id=%s purpose=%s filename=%s size=%s type=%s expiresAt=%s url=%s",
+                        file.getId(),
+                        file.getPurpose(),
+                        file.getFilename(),
+                        file.getSize(),
+                        file.getType(),
+                        file.getExpiresAt(),
+                        file.getUrl());
+                log.info(line);
+                System.out.println(line);
+            } catch (StripeException e) {
+                log.warn("拉取签名文件失败 fileId={}: {}", fileId, e.getMessage());
+            }
+        }
     }
 
     /**

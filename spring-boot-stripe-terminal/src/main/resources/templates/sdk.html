@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Stripe Terminal SDK Mode</title>
+    <link rel="stylesheet" href="/static/css/pos.css"/>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1>Stripe Terminal SDK 驱动模式</h1>
+        <div class="connection-status">
+            <span class="status-dot offline" id="sdkStatusDot"></span>
+            <span id="sdkStatusText">未初始化</span>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="panel">
+            <h2>1. SDK 初始化与连接</h2>
+            <div class="section">
+                <button class="btn btn-primary" id="btnInitSdk">初始化 SDK</button>
+                <button class="btn btn-secondary" id="btnDiscoverReaders">发现读卡器</button>
+                <button class="btn btn-danger" id="btnDisconnect">断开读卡器</button>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>
+                        <input type="checkbox" id="sdkSimulatedMode"/>
+                        使用模拟读卡器（测试）
+                    </label>
+                </div>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Location ID（可选，建议填写）</label>
+                    <input type="text" id="sdkLocationId" placeholder="tml_xxx"/>
+                </div>
+            </div>
+            <div class="section">
+                <h3>可用读卡器</h3>
+                <div id="sdkReaderList" class="list-container"></div>
+            </div>
+            <div class="section">
+                <h3>已连接设备</h3>
+                <div class="selected-reader" id="sdkConnectedReader"><span class="placeholder">暂无</span></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>2. 支付流程（SDK）</h2>
+            <div class="form-group">
+                <label>金额 (USD)</label>
+                <input type="number" id="sdkAmount" step="0.01" min="0.5" value="10.00"/>
+            </div>
+            <div class="form-group">
+                <label>订单描述</label>
+                <input type="text" id="sdkDescription" value="SDK mode payment"/>
+            </div>
+            <div class="form-group">
+                <label>订单号</label>
+                <input type="text" id="sdkReferenceId" placeholder="业务订单号"/>
+            </div>
+            <div class="form-group">
+                <label>捕获方式</label>
+                <select id="sdkCaptureMethod">
+                    <option value="manual">manual</option>
+                    <option value="automatic">automatic</option>
+                </select>
+            </div>
+            <button class="btn btn-success btn-lg" id="btnSdkPay">创建意图并收款</button>
+            <div class="form-group" style="margin-top: 12px">
+                <input type="text" id="sdkPaymentIntentId" placeholder="PaymentIntent ID"/>
+                <button class="btn btn-primary" id="btnSdkCapture">手动Capture</button>
+                <button class="btn btn-secondary" id="btnSdkQuery">查询状态</button>
+            </div>
+            <div class="payment-status" id="sdkPayStatus">
+                <div class="status-info">等待操作...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="log-panel">
+        <h3>SDK 模式日志 <button class="btn btn-sm" id="btnSdkClearLog">清空</button></h3>
+        <div id="sdkLogContainer" class="log-container"></div>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/terminal/v1/"></script>
+<script src="/static/js/sdk-pos.js"></script>
+</body>
+</html>

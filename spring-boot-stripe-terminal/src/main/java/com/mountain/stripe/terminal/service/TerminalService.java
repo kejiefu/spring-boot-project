@@ -32,6 +32,18 @@ public class TerminalService {
     private boolean simulated;
 
     /**
+     * 获取 SDK 发现读卡器默认配置。
+     *
+     * @return 包含默认 location 和 simulated 的配置
+     */
+    public Map<String, Object> getSdkDiscoverConfig() {
+        Map<String, Object> config = new HashMap<>(4);
+        config.put("defaultLocationId", defaultLocationId);
+        config.put("simulated", simulated);
+        return config;
+    }
+
+    /**
      * 创建连接令牌, 用于前端JS SDK初始化
      *
      * @return ConnectionToken的secret
@@ -153,6 +165,42 @@ public class TerminalService {
     public Reader createAndProcessPayment(Long amount, String currency, String description,
                                           String referenceId, String readerId,
                                           String captureMethod) throws StripeException {
+        PaymentIntent paymentIntent = createCardPresentPaymentIntent(amount, currency, description, referenceId, captureMethod);
+        log.info("PaymentIntent created: id={}, amount={}, currency={}",
+                paymentIntent.getId(), amount, paymentIntent.getCurrency());
+
+        Reader reader = Reader.retrieve(readerId);
+        Map<String, Object> processParams = new HashMap<>(4);
+        processParams.put("payment_intent", paymentIntent.getId());
+        reader = reader.processPaymentIntent(processParams);
+        log.info("Payment processing on reader: readerId={}, actionStatus={}",
+                readerId, JSONUtil.toJsonStr(reader.getAction()));
+
+        return reader;
+    }
+
+    /**
+     * 创建PaymentIntent（SDK驱动模式）
+     * 仅创建意图，不直接下发读卡器动作，供Terminal SDK执行 collect/process。
+     *
+     * @param amount        金额(分)
+     * @param currency      货币类型
+     * @param description   描述
+     * @param referenceId   业务唯一标识
+     * @param captureMethod 捕获方式
+     * @return PaymentIntent对象
+     * @throws StripeException Stripe API异常
+     */
+    public PaymentIntent createPaymentIntentForSdk(Long amount, String currency, String description,
+                                                   String referenceId, String captureMethod) throws StripeException {
+        PaymentIntent paymentIntent = createCardPresentPaymentIntent(amount, currency, description, referenceId, captureMethod);
+        log.info("SDK PaymentIntent created: id={}, amount={}, status={}",
+                paymentIntent.getId(), paymentIntent.getAmount(), paymentIntent.getStatus());
+        return paymentIntent;
+    }
+
+    private PaymentIntent createCardPresentPaymentIntent(Long amount, String currency, String description,
+                                                         String referenceId, String captureMethod) throws StripeException {
         String cur = StrUtil.isNotBlank(currency) ? currency : "usd";
         String capMethod = StrUtil.isNotBlank(captureMethod) ? captureMethod : "manual";
 
@@ -171,18 +219,7 @@ public class TerminalService {
             metadata.put("reference_id", referenceId);
             piParams.put("metadata", metadata);
         }
-
-        PaymentIntent paymentIntent = PaymentIntent.create(piParams);
-        log.info("PaymentIntent created: id={}, amount={}, currency={}", paymentIntent.getId(), amount, cur);
-
-        Reader reader = Reader.retrieve(readerId);
-        Map<String, Object> processParams = new HashMap<>(4);
-        processParams.put("payment_intent", paymentIntent.getId());
-        reader = reader.processPaymentIntent(processParams);
-        log.info("Payment processing on reader: readerId={}, actionStatus={}",
-                readerId, JSONUtil.toJsonStr(reader.getAction()));
-
-        return reader;
+        return PaymentIntent.create(piParams);
     }
 
     /**

@@ -47,6 +47,19 @@ public class TerminalController {
         }
     }
 
+    /**
+     * 获取 SDK discoverReaders 默认参数。
+     */
+    @GetMapping("/sdk/config")
+    public ResultVO<Map<String, Object>> getSdkConfig() {
+        try {
+            return ResultVO.success(terminalService.getSdkDiscoverConfig());
+        } catch (Exception e) {
+            log.error("getSdkConfig error:", e);
+            return ResultVO.error(e.getMessage());
+        }
+    }
+
     // ==================== Location管理 ====================
 
     /**
@@ -153,6 +166,23 @@ public class TerminalController {
             return ResultVO.success(reader);
         } catch (Exception e) {
             log.error("createPayment error:", e);
+            return ResultVO.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 创建PaymentIntent（SDK驱动模式）
+     * 前端Terminal SDK通过collect/process完成收款，不在后端直接process reader。
+     */
+    @PostMapping("/payments/intents")
+    public ResultVO<PaymentIntent> createPaymentIntentForSdk(@RequestBody CreatePaymentVO vo) {
+        try {
+            PaymentIntent paymentIntent = terminalService.createPaymentIntentForSdk(
+                    vo.getAmount(), vo.getCurrency(), vo.getDescription(),
+                    vo.getReferenceId(), vo.getCaptureMethod());
+            return ResultVO.success(paymentIntent);
+        } catch (Exception e) {
+            log.error("createPaymentIntentForSdk error:", e);
             return ResultVO.error(e.getMessage());
         }
     }
