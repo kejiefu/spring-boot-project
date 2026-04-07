@@ -61,6 +61,7 @@ public class HttpRequestLogFilter extends OncePerRequestFilter {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String requestBody = getRequestBody(request);
         int status = response.getStatus();
+        String responseBody = getResponseBody(response);
 
         StringBuilder sb = new StringBuilder(512);
         sb.append("HTTP Request => method=").append(method)
@@ -81,11 +82,23 @@ public class HttpRequestLogFilter extends OncePerRequestFilter {
         sb.append(", status=").append(status)
                 .append(", costMs=").append(costMs);
 
+        if (StringUtils.hasText(responseBody)) {
+            sb.append(", responseBody=").append(responseBody);
+        }
+
         log.info(sb.toString());
     }
 
     private String getRequestBody(ContentCachingRequestWrapper request) {
         byte[] content = request.getContentAsByteArray();
+        if (content == null || content.length == 0) {
+            return "";
+        }
+        return new String(content, StandardCharsets.UTF_8).trim();
+    }
+
+    private String getResponseBody(ContentCachingResponseWrapper response) {
+        byte[] content = response.getContentAsByteArray();
         if (content == null || content.length == 0) {
             return "";
         }
